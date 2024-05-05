@@ -4,17 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { setJobs, setOptions, setLoading } from "./reducer/jobSlice";
 import { capitalizeFirstLetter } from "./utils/globalFunctions";
 import "./App.css";
+import JobList from "./components/JobList";
 
 const App = () => {
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state: any) => state.jobs);
-
-  const [filters, setFilters] = useState({
-    role: null,
-    experience: null,
-    location: null,
-    minJdSalary: null,
-  });
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -26,7 +20,7 @@ const App = () => {
     myHeaders.append("Content-Type", "application/json");
 
     const body = JSON.stringify({
-      limit: 10,
+      limit: 12,
       offset: 0,
     });
 
@@ -102,12 +96,7 @@ const App = () => {
     dispatch(setLoading(false));
   };
 
-  const handleStateValues = (key: string, value: any) => {
-    setFilters({
-      ...filters,
-      [key]: value,
-    });
-  };
+
 
   return (
     <div>
@@ -117,7 +106,11 @@ const App = () => {
           alt="Loading..."
         />
       ) : (
-        <Filters filters={filters} onChange={handleStateValues} />
+        <>
+          <h1 className="heading">WeekDay Job Portal</h1> <hr />
+          <Filters />
+          <JobList />
+        </>
       )}
     </div>
   );
