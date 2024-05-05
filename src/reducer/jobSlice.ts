@@ -5,6 +5,10 @@ export const jobSlice = createSlice({
   initialState: {
     jobList: null,
     roleOptions: null,
+    experienceOptions: null,
+    locationOptions: null,
+    minJdSalaryOptions: null,
+    isLoading: false,
   },
   reducers: {
     setJobs: (state, action) => {
@@ -12,10 +16,16 @@ export const jobSlice = createSlice({
     },
     setOptions: (state, action) => {
       state.roleOptions = action.payload.roleOptions;
+      state.experienceOptions = action.payload.experienceOptions;
+      state.locationOptions = action.payload.locationOptions;
+      state.minJdSalaryOptions = action.payload.minJdSalaryOptions;
+    },
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
     },
   },
 });
 
-export const { setJobs, setOptions } = jobSlice.actions;
+export const { setJobs, setOptions, setLoading } = jobSlice.actions;
 
 export default jobSlice.reducer;

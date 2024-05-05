@@ -6,11 +6,6 @@ type ValueType = {
     label: string;
 } | null;
 
-const options = [
-    { value: "one", label: "One" },
-    { value: "two", label: "Two" },
-];
-
 interface FiltersProps {
     filters: {
         role: ValueType;
@@ -22,7 +17,12 @@ interface FiltersProps {
 }
 
 const Filters = (props: FiltersProps) => {
-    const { roleOptions } = useSelector((state: any) => state.jobs)
+    const {
+        roleOptions,
+        experienceOptions,
+        locationOptions,
+        minJdSalaryOptions,
+    } = useSelector((state: any) => state.jobs);
 
     return (
         <div className="filter_row">
@@ -34,21 +34,21 @@ const Filters = (props: FiltersProps) => {
                 placeholder="Role"
             />
             <CustomDropdown
-                options={options}
+                options={experienceOptions}
                 value={props.filters.experience}
                 onChange={props.onChange}
                 stateKey="experience"
                 placeholder="Experience"
             />
             <CustomDropdown
-                options={options}
+                options={locationOptions}
                 value={props.filters.location}
                 onChange={props.onChange}
                 stateKey="location"
                 placeholder="Location"
             />
             <CustomDropdown
-                options={options}
+                options={minJdSalaryOptions}
                 value={props.filters.minJdSalary}
                 onChange={props.onChange}
                 stateKey="minJdSalary"

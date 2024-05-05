@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import Filters from "./components/Filters";
 import { useSelector, useDispatch } from "react-redux";
-import { setJobs, setOptions } from "./reducer/jobSlice";
+import { setJobs, setOptions, setLoading } from "./reducer/jobSlice";
+import { capitalizeFirstLetter } from "./utils/globalFunctions";
+import "./App.css";
 
 const App = () => {
-  const jobList = useSelector((state: any) => state.jobs);
   const dispatch = useDispatch();
+  const { isLoading } = useSelector((state: any) => state.jobs);
+
   const [filters, setFilters] = useState({
     role: null,
     experience: null,
@@ -15,6 +17,7 @@ const App = () => {
   });
 
   useEffect(() => {
+    dispatch(setLoading(true));
     fetchJobs();
   }, []);
 
@@ -39,24 +42,65 @@ const App = () => {
       .then((response) => response.json())
       .then((result) => {
         dispatch(setJobs(result));
-        setFiltersHandlers(result?.jdList)
+        setFiltersHandlers(result?.jdList);
       })
       .catch((error) => console.error(error));
   };
 
   const setFiltersHandlers = (jobs: any) => {
     const tempJobs = [...jobs];
-    const roleOptions = [...new Set(tempJobs.map(item => item.jobRole))].map((element: any) => {
-      return {
-        label: element,
-        value: element,
+    const roleOptions = [...new Set(tempJobs.map((item) => item.jobRole))].map(
+      (element: any) => {
+        return {
+          label: capitalizeFirstLetter(element),
+          value: element,
+        };
       }
-    })
+    );
 
-    dispatch(setOptions({
-      roleOptions: roleOptions
-    }))
-  }
+    const experienceOptions = [...new Set(tempJobs.map((item) => item.minExp))] // getting unique values
+      .filter((number) => number == 0 || number) // filtering values for null check
+      .sort((a, b) => a - b) // sorting
+      .map((element) => {
+        // mapping as label and value
+        return {
+          label: `${element} ${element > 1 ? "years" : "year"}`,
+          value: element,
+        };
+      });
+
+    const locationOptions = [...new Set(tempJobs.map((item) => item.location))]
+      .filter((element) => element)
+      .sort()
+      .map((element) => {
+        return {
+          label: capitalizeFirstLetter(element),
+          value: element,
+        };
+      });
+
+    const minJdSalaryOptions = [
+      ...new Set(tempJobs.map((item) => item.minJdSalary)),
+    ]
+      .filter((number) => number == 0 || number)
+      .sort((a, b) => a - b)
+      .map((element) => {
+        return {
+          label: element,
+          value: element,
+        };
+      });
+
+    dispatch(
+      setOptions({
+        roleOptions,
+        experienceOptions,
+        locationOptions,
+        minJdSalaryOptions,
+      })
+    );
+    dispatch(setLoading(false));
+  };
 
   const handleStateValues = (key: string, value: any) => {
     setFilters({
@@ -67,7 +111,14 @@ const App = () => {
 
   return (
     <div>
-      <Filters filters={filters} onChange={handleStateValues} />
+      {isLoading ? (
+        <img
+          src="https://motiongraphicsphoebe.files.wordpress.com/2018/10/giphy.gif"
+          alt="Loading..."
+        />
+      ) : (
+        <Filters filters={filters} onChange={handleStateValues} />
+      )}
     </div>
   );
 };
