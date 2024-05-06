@@ -8,20 +8,20 @@ import JobList from "./components/JobList";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state: any) => state.jobs);
+  const { isLoading, filters } = useSelector((state: any) => state.jobs);
 
   useEffect(() => {
     dispatch(setLoading(true));
-    fetchJobs();
+    fetchJobs(filters?.limit, filters?.offset);
   }, []);
 
-  const fetchJobs = () => {
+  const fetchJobs = (limit: number, offset: number) => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     const body = JSON.stringify({
-      limit: 12,
-      offset: 0,
+      limit,
+      offset,
     });
 
     const requestOptions = {
@@ -96,20 +96,26 @@ const App = () => {
     dispatch(setLoading(false));
   };
 
-
-
   return (
     <div>
       {isLoading ? (
-        <img
-          src="https://motiongraphicsphoebe.files.wordpress.com/2018/10/giphy.gif"
-          alt="Loading..."
-        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src="https://motiongraphicsphoebe.files.wordpress.com/2018/10/giphy.gif"
+            alt="Loading..."
+          />
+        </div>
       ) : (
         <>
           <h1 className="heading">WeekDay Job Portal</h1> <hr />
           <Filters />
-          <JobList />
+          <JobList loadMore={fetchJobs} />
         </>
       )}
     </div>

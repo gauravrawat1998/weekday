@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const LIMIT = 12;
+export const LIMIT = 12;
 
 export const jobSlice = createSlice({
   name: "jobs",
@@ -23,8 +23,18 @@ export const jobSlice = createSlice({
   },
   reducers: {
     setJobs: (state, action) => {
-      state.jobList = action.payload;
-      state.jobListTemp = action.payload;
+      state.jobList = state.jobList
+        ? {
+            ...state.jobList,
+            jdList: [...state?.jobList?.jdList, ...action.payload?.jdList],
+          }
+        : action.payload;
+      state.jobListTemp = state.jobListTemp
+        ? {
+            ...state.jobListTemp,
+            jdList: [...state?.jobListTemp?.jdList, ...action.payload?.jdList],
+          }
+        : action.payload;
     },
     setOptions: (state, action) => {
       state.roleOptions = action.payload.roleOptions;
@@ -46,12 +56,11 @@ export const jobSlice = createSlice({
     },
     resetFilters: (state) => {
       state.filters = {
+        ...state.filters,
         role: null,
         experience: null,
         location: null,
         minJdSalary: null,
-        limit: LIMIT,
-        offset: 0,
       };
     },
   },

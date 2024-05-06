@@ -23,7 +23,7 @@ span {
 .infinite-scroll-component {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 
 .job_card_container {
@@ -33,6 +33,7 @@ span {
   padding: 20px;
   box-shadow: 0 2px 10px 0 gray;
   margin-bottom: 10px;
+  margin-right: 5px;
 }
 
 .job_card_header {

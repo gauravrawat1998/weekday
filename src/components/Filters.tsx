@@ -49,7 +49,13 @@ const Filters = () => {
 
             dispatch(
                 setTempJobs({
-                    totalCount: tempJobList.length,
+                    totalCount:
+                        filters?.role ||
+                            filters?.experience ||
+                            filters?.location ||
+                            filters?.minJdSalary
+                            ? tempJobList.length
+                            : jobList?.totalCount,
                     jdList: tempJobList,
                 })
             );
@@ -90,7 +96,7 @@ const Filters = () => {
                 stateKey="minJdSalary"
                 placeholder="Minimum Base Pay Salary"
             />
-            <button onClick={onReset}>Clear Filter</button>
+            {/* <button onClick={onReset}>Clear Filter</button> */}
         </div>
     );
 };

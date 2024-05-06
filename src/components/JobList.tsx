@@ -1,9 +1,24 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import JobCard from "./JobCard";
+import { LIMIT, setFilters } from "../reducer/jobSlice";
 
-const jobListTemp = () => {
-    const { jobListTemp, jobList } = useSelector((state: any) => state.jobs);
+interface JobListProps {
+    loadMore: Function;
+}
+
+const JobList = (props: JobListProps) => {
+    const { jobListTemp, jobList, filters } = useSelector(
+        (state: any) => state.jobs
+    );
+    const dispatch = useDispatch();
+    const { loadMore } = props;
+
+    const shouldLoadMore = () =>
+        !filters?.role &&
+        !filters?.experience &&
+        !filters?.location &&
+        !filters?.minJdSalary;
 
     return (
         <div className="mt-20">
@@ -11,9 +26,21 @@ const jobListTemp = () => {
             {jobList?.jdList && jobList?.jdList?.length ? (
                 <InfiniteScroll
                     dataLength={jobList.jdList.length}
-                    next={() => { }}
+                    scrollableTarget="scrollableDiv"
+                    next={() => {
+                        console.log(shouldLoadMore(), "shouldLoadMore()");
+
+                        if (shouldLoadMore()) {
+                            console.log("CALLED");
+
+                            loadMore(filters?.limit, filters?.offset + LIMIT);
+                            dispatch(
+                                setFilters({ key: "offset", value: filters?.offset + LIMIT })
+                            );
+                        }
+                    }}
                     hasMore={jobList.jdList.length < jobList.totalCount ? true : false}
-                    loader={<h4>Loading...</h4>}
+                    loader={shouldLoadMore() ? <h4>Loading...</h4> : null}
                     endMessage={
                         <p style={{ textAlign: "center" }}>
                             <b>Yay! You have seen it all</b>
@@ -31,4 +58,4 @@ const jobListTemp = () => {
     );
 };
 
-export default jobListTemp;
+export default JobList;
